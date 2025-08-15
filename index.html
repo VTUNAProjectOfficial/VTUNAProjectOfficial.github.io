@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>VTUNA 시뮬레이터</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<header class="app-header container">
+  <div class="head-left">
+    <img class="site-logo" src="logo_small.png" alt="VTUNAlculator" />
+  </div>
+  <label class="switch" title="다크 모드">
+    <input id="themeSwitch" type="checkbox" aria-label="다크 모드 전환" />
+    <span class="slider"></span>
+    <span class="switch-text" style="font-size:smaller"; >심연 모드</span>
+  </label>
+</header>
+
+<main class="container app-main">
+  <!-- 상단 공통 입력 -->
+  <section class="card grid gap16">
+    <div class="row wrap gap12">
+      <label class="grow">
+        <div class="lbl">캐릭터 이름</div>
+        <input id="charName" type="text" placeholder="이름" />
+      </label>
+      <label class="grow">
+        <div class="lbl">누적 뷰어십</div>
+        <input id="accView" type="number" min="0" value="1000" />
+      </label>
+      <label class="grow">
+        <div class="lbl">캐릭터 특성</div>
+        <select id="trait">
+          <option value="none">해당 없음</option>
+          <option value="loner">개인세</option>
+          <option value="moe_voice">모에고에나마누시</option>
+          <option value="hypetrain">수금왕</option>
+          <option value="karakara">알중 카라카라</option>
+          <option value="reincarnated">전생자</option>
+        </select>
+      </label>
+    </div>
+
+    <!-- 스탯 + 타입 (전역 1개) -->
+    <div class="grid col2 gap16">
+      <div class="card soft grid gap12">
+        <div class="section-title">스테이터스</div>
+        <div class="stat-block">
+          <div class="stat-left">토크</div>
+          <div class="stat-right">
+            <div class="type-row">
+              <button class="type-btn" data-type="mc">MC 타입</button>
+              <button class="type-btn" data-type="comedian">게닌 타입</button>
+            </div>
+            <div class="lvl-toggle" data-stat="talk"></div>
+          </div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-left">게이밍</div>
+          <div class="stat-right">
+            <div class="type-row">
+              <button class="type-btn" data-type="esports">e스포츠 타입</button>
+              <button class="type-btn" data-type="jong">종겜스 타입</button>
+            </div>
+            <div class="lvl-toggle" data-stat="game"></div>
+          </div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-left">보컬</div>
+          <div class="stat-right">
+            <div class="type-row">
+              <button class="type-btn" data-type="utaite">우타이테 타입</button>
+              <button class="type-btn" data-type="idol">아이돌 타입</button>
+            </div>
+            <div class="lvl-toggle" data-stat="vocal"></div>
+          </div>
+        </div>
+        <div class="stat-block">
+          <div class="stat-left">탤런트</div>
+          <div class="stat-right">
+            <div class="type-row">
+              <button class="type-btn" data-type="specialist">스페셜리스트</button>
+            </div>
+            <div class="lvl-toggle" data-stat="talent"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 아이템 -->
+      <div class="card soft grid gap12">
+        <div class="section-title">보유 아이템</div>
+          <div class="stepper">
+            <div class="lbl">오리지널 곡</div>
+            <button class="minus" data-step="song">−</button>
+            <input id="songCount" type="number" min="0" value="0" />
+            <button class="plus" data-step="song">＋</button>
+          </div>
+          <div class="stepper">
+            <div class="lbl">팬게임</div>
+            <button class="minus" data-step="fan">−</button>
+            <input id="fanCount" type="number" min="0" value="0" />
+            <button class="plus" data-step="fan">＋</button>
+          </div>
+          <div class="stepper">
+            <div class="lbl">굿즈 출시</div>
+            <button class="minus" data-step="goods">−</button>
+            <input id="goodsCount" type="number" min="0" value="0" />
+            <button class="plus" data-step="goods">＋</button>
+          </div>
+          <label class="ck">
+            <input id="item3d" type="checkbox" />
+            <span>3D</span>
+          </label>
+          <label class="ck">
+            <input id="itemMic" type="checkbox" disabled />
+            <span>바이노럴 마이크</span>
+          </label>
+          <label class="ck">
+            <input id="itemEnergy" type="checkbox" />
+            <span>에나도리</span>
+          </label>
+          <label class="ck">
+            <input id="itemOsake" type="checkbox" disabled />
+            <span>오사께</span>
+          </label>
+          <label class="ck">
+            <input id="itemCake" type="checkbox" />
+            <span>생일 케이크</span>
+          </label>
+        </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 계산 카드 3개 -->
+  <section class="grid col3 gap16" id="calcContainer"></section>
+
+  <!-- 합치기 -->
+  <section class="card grid gap12">
+    <div class="section-header">
+     <div class="section-result" style="font-size:big">방송 오츠카레!</div>
+     <button id="btnCopyAll" class="btn primary">결과 복사</button>
+    </div>
+    <textarea id="allText" rows="6" readonly></textarea>
+  </section>
+</main>
+
+<!-- 카드 템플릿 -->
+<template id="calc-card">
+  <div class="card grid gap12 calc-card">
+    <div class="section-title">방송 내용</div>
+    <div class="broadcast-grid">
+      <button class="btn square ghost bc" data-kind="basic" data-id="chatting">잡담</button>
+      <button class="btn square ghost bc" data-kind="basic" data-id="gaming">게임</button>
+      <button class="btn square ghost bc" data-kind="basic" data-id="karaoke">우타와꾸</button>
+      <button class="btn square ghost bc" data-kind="basic" data-id="plan">기획</button>
+      <div class="wide">
+        <button class="btn ghost open-other" aria-expanded="false">기타</button>
+      </div>
+    </div>
+    <div class="float-menu" role="menu" aria-label="특별 방송"></div>
+
+    <div class="row gap8 wrap">
+      <!-- 상호 배타 토글 -->
+      <label class="chip">
+        <input class="ck-kiri" type="radio" name="pair" value="kiri" />
+        <span>키리누키</span>
+      </label>
+      <label class="chip">
+        <input class="ck-collab" type="radio" name="pair" value="collab" />
+        <span>콜라보</span>
+      </label>
+      <label class="chip">
+        <input class="ck-afterhiatus" type="checkbox" />
+        <span>휴방 보너스</span>
+      </label>
+
+      <!-- 4연속 패널티(기본 방송일 때만 의미) -->
+      <label class="chip" >
+        <input class="ck-penalty" type="checkbox" />
+        <span>연속 4회 패널티</span>
+      </label>
+
+      <!-- 게임 6회 보너스(게임일 때만 표시) -->
+      <label class="chip" data-gaming style="display:none">
+        <input class="ck-six" type="checkbox" />
+        <span>게임 6회 보너스</span>
+      </label>
+
+      <label class="bonus-pill">
+        <span>보너스 직접 입력 <input class="in-bonus" type="number" inputmode="numeric" pattern="-?[0-9]" value="0" step="1" min="-999" max="999" aria-label="보너스 퍼센트" /> %
+        </span>
+      </label>
+    </div>
+
+    <div class="section-title">결과</div>
+    <div class="grid col2 gap12">
+      <div class="copybox">
+        <div class="lbl">획득 뷰어십</div>
+        <div class="out-viewers">0</div>
+      </div>
+      <div class="copybox">
+        <div class="lbl">슈퍼챗</div>
+        <div class="out-super">[dice 0 0]</div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<footer class="app-footer container">
+  <div class="footer-text">Powered by UMIGAME OTSUYU | VTUNA Production<br>본 페이지의 디자인에는 김경원, 자모(JAMO)에서 제작한 Bagel Fat One 글꼴이 OFL 라이선스 이용규약 하에 사용되었습니다.</div>
+</footer>
+
+<!-- Floating Action Buttons -->
+<div class="fab-stack" aria-label="리모컨">
+  <!-- 맨 위로 -->
+  <button class="fab fab-top" aria-label="상승부하">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M4 20h16v-2H4v2zm8-14l-6 6 1.41 1.41L11 10.83V18h2v-7.17l3.59 3.58L18 12l-6-6z"/>
+    </svg>
+  </button>
+
+  <!-- 맨 아래로 -->
+  <button class="fab fab-bottom" aria-label="절계행">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M4 4h16v2H4V4zm8 14l6-6-1.41-1.41L13 13.17V6h-2v7.17l-3.59-3.58L6 12l6 6z"/>
+    </svg>
+  </button>
+</div>
+
+<script src="app.js" defer></script>
+</body>
+</html>
